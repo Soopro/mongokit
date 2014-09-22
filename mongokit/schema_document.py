@@ -601,7 +601,7 @@ class SchemaDocument(dict):
                                       "%s must be an instance of %s not %s" % (
                                           path, type(struct).__name__, type(doc).__name__))
             struct_length = len(struct) if not '_id' in struct else len(struct) - 1
-            doc_length = len(doc_ if not '_id' in doc else len(doc) - 1
+            doc_length = len(doc) if not '_id' in doc else len(doc) - 1
             if doc_length != struct_length:
                 struct_doc_diff = list(set(struct).difference(set(doc)))
                 if struct_doc_diff:
