@@ -46,7 +46,7 @@ class SchemaLessTestCase(unittest.TestCase):
         class MyDoc(Document):
             use_schemaless = True
             structure = {
-                'foo': unicode,
+                'foo': str,
                 'bar': int,
             }
 
@@ -85,7 +85,7 @@ class SchemaLessTestCase(unittest.TestCase):
         class MyDoc(Document):
             use_schemaless = True
             structure = {
-                'foo': unicode,
+                'foo': str,
                 'bar': int,
             }
             required_fields = ['foo']
@@ -147,11 +147,11 @@ class SchemaLessTestCase(unittest.TestCase):
             __database__ = 'test'
             use_schemaless = True
             structure = {
-                'name': unicode,
-                'password': unicode,
-                'last_name': unicode,
-                'first_name': unicode,
-                'email': unicode,
+                'name': str,
+                'password': str,
+                'last_name': str,
+                'first_name': str,
+                'email': str,
                 'last_login': datetime.datetime,
             }
             use_dot_notation = True

@@ -36,10 +36,10 @@ class HelpersTestCase(unittest.TestCase):
         d = DotExpandedDict({'a.$int.c.d': 3, 'a.$int.e': 5, '_id': u'user', 'a.g': 2, 'f': 6})
         assert d == {'_id': u'user', 'a':{int:{'c':{'d':3}, 'e':5}, "g":2}, 'f':6}, d
 
-        d = DotExpandedDict({'foo.bla.$unicode': [unicode], 'foo.bar': {}})
-        assert d == {'foo': {'bar': {}, 'bla': {unicode: [unicode]}}}, d
+        d = DotExpandedDict({'foo.bla.$str': [str], 'foo.bar': {}})
+        assert d == {'foo': {'bar': {}, 'bla': {str: [str]}}}, d
 
-        self.assertRaises(EvalException, DotExpandedDict, {'foo.bla.$arf': [unicode], 'foo.bar': {}})
+        self.assertRaises(EvalException, DotExpandedDict, {'foo.bla.$arf': [str], 'foo.bar': {}})
 
         d = DotExpandedDict({'person.1.firstname': ['Simon'],
           'person.1.lastname': ['Willison'],
@@ -111,11 +111,11 @@ class HelpersTestCase(unittest.TestCase):
         d = DotCollapsedDict(dic, remove_under_type=True)
         assert d == {'a': {}, '_id': u'user', 'f': 6}, d
 
-        dic = {'bla':{'foo':{unicode:{"bla":int}}, 'bar':unicode}}
+        dic = {'bla':{'foo':{str:{"bla":int}}, 'bar':str}}
         d = DotCollapsedDict(dic, remove_under_type=True)
-        assert d == {'bla.foo':{}, 'bla.bar':unicode}, d
+        assert d == {'bla.foo':{}, 'bla.bar':str}, d
 
-        dic = {'bla':{'foo':{unicode:[unicode]}, 'bar':"egg"}}
+        dic = {'bla':{'foo':{str:[str]}, 'bar':"egg"}}
         d = DotCollapsedDict(dic, remove_under_type=True)
         assert d == {'bla.foo':{}, 'bla.bar':"egg"}, d
 
@@ -124,10 +124,10 @@ class HelpersTestCase(unittest.TestCase):
         d = DotCollapsedDict(dic)
         assert d == {'a.$int.c.d': 3, 'a.$int.e': 5, '_id': u'user', 'a.g': 2, 'f': 6}, d
 
-        dic = {'bla':{'foo':{unicode:{"bla":3}}, 'bar':'egg'}}
+        dic = {'bla':{'foo':{str:{"bla":3}}, 'bar':'egg'}}
         d = DotCollapsedDict(dic)
         assert d == {'bla.foo.$unicode.bla': 3, 'bla.bar': "egg"}, d
 
-        dic = {'bla':{'foo':{unicode:['egg']}, 'bar':"egg"}}
+        dic = {'bla':{'foo':{str:['egg']}, 'bar':"egg"}}
         d = DotCollapsedDict(dic)
         assert d == {'bla.foo.$unicode': ['egg'], 'bla.bar': 'egg'}, d

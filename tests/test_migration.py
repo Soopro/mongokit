@@ -40,11 +40,11 @@ class MigrationTestCase(unittest.TestCase):
         # create initial blog post class
         class BlogPost(Document):
             structure = {
-                'author':unicode,
+                'author':str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
+                    "body": str,
                 }
             }
             default_values = {'blog_post.created_at':datetime(2010, 1, 1)}
@@ -64,12 +64,12 @@ class MigrationTestCase(unittest.TestCase):
     def test_simple_doc_migration(self):
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
-                    "tags":  [unicode],
+                    "body": str,
+                    "tags":  [str],
                 }
             }
         self.connection.register([BlogPost])
@@ -91,12 +91,12 @@ class MigrationTestCase(unittest.TestCase):
     def test_simple_all_migration(self):
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
-                    "tags":  [unicode],
+                    "body": str,
+                    "tags":  [str],
                 }
             }
         self.connection.register([BlogPost])
@@ -118,12 +118,12 @@ class MigrationTestCase(unittest.TestCase):
     def test_simple_all_migration_with_unset(self):
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
-                    "tags":  [unicode],
+                    "body": str,
+                    "tags":  [str],
                 }
             }
         self.connection.register([BlogPost])
@@ -138,11 +138,11 @@ class MigrationTestCase(unittest.TestCase):
         # redfine class to drop the tags field
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
+                    "body": str,
                 }
             }
         self.connection.register([BlogPost])
@@ -154,12 +154,12 @@ class MigrationTestCase(unittest.TestCase):
     def test_simple_all_migration_with_bad_update(self):
         class BlogPost(Document):
             structure = {
-                "author": unicode,
+                "author": str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "created_at": datetime,
-                    "body": unicode,
-                    "tags":  [unicode],
+                    "body": str,
+                    "tags":  [str],
                 }
             }
         self.connection.register([BlogPost])
@@ -189,12 +189,12 @@ class MigrationTestCase(unittest.TestCase):
         # update blog post class
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "creation_date": datetime,
-                    "body": unicode,
-                    "tags": [unicode],
+                    "body": str,
+                    "tags": [str],
                 }
             }
             migration_handler = BlogPostMigration
@@ -228,12 +228,12 @@ class MigrationTestCase(unittest.TestCase):
         class BlogPost(Document):
             skip_validation = True
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "creation_date": datetime,
-                    "body": unicode,
-                    "tags": [unicode],
+                    "body": str,
+                    "tags": [str],
                 }
             }
             migration_handler = BlogPostMigration
@@ -265,12 +265,12 @@ class MigrationTestCase(unittest.TestCase):
         # update blog post class
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": unicode,
+                    "title": str,
                     "creation_date": datetime,
-                    "body": unicode,
-                    "tags": [unicode],
+                    "body": str,
+                    "tags": [str],
                 }
             }
             migration_handler = BlogPostMigration
@@ -332,12 +332,12 @@ class MigrationTestCase(unittest.TestCase):
         # update blog post class
         class BlogPost(Document):
             structure = {
-                "author":unicode,
+                "author":str,
                 "blog_post":{
-                    "title": {'lang':unicode, 'value':unicode},
+                    "title": {'lang':str, 'value':str},
                     "creation_date": datetime,
-                    "body": unicode,
-                    "tags": [{'foo':unicode}],
+                    "body": str,
+                    "tags": [{'foo':str}],
                 }
             }
             migration_handler = BlogPostMigration
@@ -367,17 +367,17 @@ class MigrationTestCase(unittest.TestCase):
         try:
             class BlogPost(Document):
                 structure = {
-                    "author":unicode,
+                    "author":str,
                     "blog_post":{
-                        "title": unicode,
+                        "title": str,
                         "creation_date": datetime,
-                        "body": unicode,
-                        "tags": [unicode],
+                        "body": str,
+                        "tags": [str],
                     }
                 }
                 use_schemaless = True
                 migration_handler = BlogPostMigration
-        except OptionConflictError, e:
+        except OptionConflictError as e:
             self.assertEqual('You cannot set a migration_handler with use_schemaless set to True', str(e))
             failed = True
         self.assertEqual(failed, True)

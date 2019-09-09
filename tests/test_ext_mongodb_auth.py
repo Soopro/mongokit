@@ -69,7 +69,7 @@ class _ExtMongoDBAuthTestCase(unittest.TestCase):
             db_password = "bar"
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam":[],
@@ -106,7 +106,7 @@ class _ExtMongoDBAuthTestCase(unittest.TestCase):
             collection_name = "mongokit_auth"
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam":[],
@@ -125,7 +125,7 @@ class _ExtMongoDBAuthTestCase(unittest.TestCase):
                 db_password = "spam"
                 structure = {
                     "bla":{
-                        "foo":unicode,
+                        "foo":str,
                         "bar":int,
                     },
                     "spam":[],

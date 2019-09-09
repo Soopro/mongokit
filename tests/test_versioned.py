@@ -43,7 +43,7 @@ class VersionedTestCase(unittest.TestCase):
     def test_save_versioning(self):
         class MyDoc(Document):
             structure = {
-                "bla" : unicode,
+                "bla" : str,
             }
         self.connection.register([MyDoc])
 
@@ -55,7 +55,7 @@ class VersionedTestCase(unittest.TestCase):
 
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -93,7 +93,7 @@ class VersionedTestCase(unittest.TestCase):
         assert versioned_doc['foo'] == 'bar'
         assert versioned_doc.get_revision(2) == {'foo':'bar', "_revision":2, "_id":"mydoc"}, versioned_doc.get_revision(2)
         old_doc = versioned_doc.get_revision(1)
-        print old_doc, type(old_doc)
+        print(old_doc, type(old_doc))
         old_doc.save()
         assert old_doc['_revision'] == 3
 
@@ -103,7 +103,7 @@ class VersionedTestCase(unittest.TestCase):
     def test_save_without_versionning(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -118,7 +118,7 @@ class VersionedTestCase(unittest.TestCase):
     def test_save_versioning_without_id(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -139,7 +139,7 @@ class VersionedTestCase(unittest.TestCase):
     def _test_bad_versioning(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
  
         self.connection.register([MyVersionedDoc])
@@ -148,7 +148,7 @@ class VersionedTestCase(unittest.TestCase):
     def test_delete_versioning(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -179,7 +179,7 @@ class VersionedTestCase(unittest.TestCase):
     def test_remove_versioning(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -218,7 +218,7 @@ class VersionedTestCase(unittest.TestCase):
     def _test_versioning_with_dynamic_db(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
         self.connection.register([MyVersionedDoc])
  
@@ -261,7 +261,7 @@ class VersionedTestCase(unittest.TestCase):
     def _test_versioning_with_dynamic_collection(self):
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
             }
             versioning_collection_name = "versioned_mongokit"
  
@@ -307,7 +307,7 @@ class VersionedTestCase(unittest.TestCase):
             class Group(VersionedDocument):
                 use_autorefs = True
                 structure = {
-                       'name':unicode,
+                       'name':str,
                        'members':[User], #users
                    }
         except:
@@ -336,7 +336,7 @@ class VersionedTestCase(unittest.TestCase):
         """
         class MyVersionedDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
                 }
 
         self.connection.register([MyVersionedDoc])
@@ -360,7 +360,7 @@ class VersionedTestCase(unittest.TestCase):
         """
         class MyVersionedUUIDDoc(VersionedDocument):
             structure = {
-                "foo" : unicode,
+                "foo" : str,
                 }
             def save(self, versioning=True, uuid=True, *args, **kwargs):
                 """ Ensure that the save is performed using uuid=True """

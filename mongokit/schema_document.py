@@ -334,10 +334,8 @@ class SchemaDocument(dict):
         type(None),
         bool,
         int,
-        long,
         float,
-        unicode,
-        basestring,
+        str,
         list,
         dict,
         datetime.datetime,
@@ -490,7 +488,7 @@ class SchemaDocument(dict):
                         raise StructureError("%s: %s is not an authorized type" % (name, struct))
             elif isinstance(struct, dict):
                 for key in struct:
-                    if isinstance(key, basestring):
+                    if isinstance(key, str):
                         if "." in key:
                             raise BadKeyError("%s: %s must not contain '.'" % (name, key))
                         if key.startswith('$'):
@@ -662,9 +660,9 @@ class SchemaDocument(dict):
                     try:
                         if not validator(doted_doc[key]):
                             raise ValidationError("%s does not pass the validator " + validator.__name__)
-                    except Exception, e:
+                    except Exception as e:
                         self._raise_exception(ValidationError, key,
-                                              unicode(e) % key)
+                                              str(e) % key)
 
     def _process_custom_type(self, target, doc, struct, path="", root_path=""):
         for key in struct:

@@ -45,7 +45,7 @@ class ApiTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam":[],
@@ -65,7 +65,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc["bla"]["foo"] = u"bar"
         mydoc["bla"]["bar"] = 43
         mydoc.save(uuid=True)
-        assert isinstance(mydoc['_id'], unicode)
+        assert isinstance(mydoc['_id'], str)
         assert mydoc['_id'].startswith("MyDoc"), id
 
         saved_doc = self.col.find_one({"bla.bar":43})
@@ -102,7 +102,7 @@ class ApiTestCase(unittest.TestCase):
         class A(SchemaDocument):
             structure = {
                 "a":{"foo":int},
-                "bar":unicode
+                "bar":str
             }
         a = A(gen_skel=False)
         assert a == {}
@@ -113,7 +113,7 @@ class ApiTestCase(unittest.TestCase):
         class A(SchemaDocument):
             structure = {
                 "a":{"foo":[int]},
-                "bar":{unicode:{"egg":int}}
+                "bar":{str:{"egg":int}}
             }
         a = A(gen_skel=False)
         assert a == {}
@@ -123,8 +123,8 @@ class ApiTestCase(unittest.TestCase):
     def test_generate_skeleton3(self):
         class A(SchemaDocument):
             structure = {
-                "a":{"foo":[int], "spam":{"bla":unicode}},
-                "bar":{unicode:{"egg":int}}
+                "a":{"foo":[int], "spam":{"bla":str}},
+                "bar":{str:{"egg":int}}
             }
         a = A(gen_skel=False)
         assert a == {}
@@ -321,12 +321,12 @@ class ApiTestCase(unittest.TestCase):
     def test_fetch_with_query(self):
         class DocA(Document):
             structure = {
-                "bar":unicode,
+                "bar":str,
                 "doc_a":{'foo':int},
             }
         class DocB(Document):
             structure = {
-                "bar":unicode,
+                "bar":str,
                 "doc_b":{"bar":int},
             }
         self.connection.register([DocA, DocB])
@@ -441,7 +441,7 @@ class ApiTestCase(unittest.TestCase):
         # boostraping
         for i in range(10):
             mydoc = mongokit.MyDoc()
-            mydoc['_id'] = unicode(i)
+            mydoc['_id'] = str(i)
             mydoc['foo'] = i
             mydoc.save()
 
@@ -574,7 +574,7 @@ class ApiTestCase(unittest.TestCase):
     def test_get_size(self):
         class MyDoc(Document):
             structure = {
-                "doc":{"foo":int, "bla":unicode},
+                "doc":{"foo":int, "bla":str},
             }
         self.connection.register([MyDoc])
 
@@ -596,7 +596,7 @@ class ApiTestCase(unittest.TestCase):
             structure = {"foo":int}
         self.connection.register([MyDoc])
 
-        for i in xrange(2000):
+        for i in range(2000):
             mydoc = self.col.MyDoc()
             mydoc['foo'] = i
             mydoc.save()
@@ -686,7 +686,7 @@ class ApiTestCase(unittest.TestCase):
             use_dot_notation = True
             structure = {
                 "foo":int,
-                "bar":{"egg":unicode},
+                "bar":{"egg":str},
                 "toto":{"spam":{"bla":int}}
             }
 
@@ -705,7 +705,7 @@ class ApiTestCase(unittest.TestCase):
     def test_validate_doc_with_field_added_after_save(self):
         class Doc(Document):
            structure = {
-               "foo": unicode,
+               "foo": str,
            }
         self.connection.register([Doc])
 
@@ -718,7 +718,7 @@ class ApiTestCase(unittest.TestCase):
     def test_distinct(self):
         class Doc(Document):
             structure = {
-                "foo": unicode,
+                "foo": str,
                 "bla": int
             }
         self.connection.register([Doc])
@@ -758,12 +758,12 @@ class ApiTestCase(unittest.TestCase):
     def test_with_long(self):
         class Doc(Document):
             structure = {
-                "foo":OR(int, long),
-                "bar":unicode,
+                "foo":int,
+                "bar":str,
             }
         self.connection.register([Doc])
         doc = self.col.Doc()
-        doc['foo'] = 12L
+        doc['foo'] = 12
         doc.save()
         fetch_doc = self.col.Doc.find_one()
         fetch_doc['bar'] = u'egg'
@@ -772,7 +772,7 @@ class ApiTestCase(unittest.TestCase):
     def test_skip_validation_with_required_field(self):
         class Task(Document):
             structure = {
-                'extra' : unicode,
+                'extra' : str,
             }
             required_fields = ['extra']
             skip_validation = True
@@ -784,7 +784,7 @@ class ApiTestCase(unittest.TestCase):
     def test_passing_collection_in_argument(self):
         class MyDoc(Document):
             structure = {
-                'foo':unicode
+                'foo':str
             }
         doc = MyDoc(collection=self.col)
         doc['foo'] = u'bla'
@@ -794,10 +794,10 @@ class ApiTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {
                 'foo':{
-                    'bar':unicode,
+                    'bar':str,
                     'eggs':{'spam':int},
                 },
-                'bla':unicode
+                'bla':str
             }
         self.connection.register([MyDoc])
 
@@ -900,7 +900,7 @@ class ApiTestCase(unittest.TestCase):
             }
         try:
             doc = self.connection.MyDoc()
-        except AttributeError, e:
+        except AttributeError as e:
             failed = True
             self.assertEqual(str(e), 'MyDoc: __collection__ attribute not '
               'found. You cannot specify the `__database__` attribute '
@@ -962,7 +962,7 @@ class ApiTestCase(unittest.TestCase):
         @self.connection.register
         class DocA(Root):
            __collection__ = "doca"
-           structure = {'title':unicode}
+           structure = {'title':str}
 
         doc = self.connection.DocA()
         doc['title'] = u'foo'
@@ -976,14 +976,14 @@ class ApiTestCase(unittest.TestCase):
         class DocA(Document):
            __database__ = 'test'
            __collection__ = "doca"
-           structure = {'title':unicode}
+           structure = {'title':str}
 
         doc = self.connection.DocA()
         doc['title'] = 'foo'
         failed = False
         try:
             doc.save()
-        except SchemaTypeError, e:
+        except SchemaTypeError as e:
             self.assertEqual(str(e), "title must be an instance of unicode not str")
             failed = True
         self.assertEqual(failed, True)
@@ -1000,7 +1000,7 @@ class ApiTestCase(unittest.TestCase):
         failed = False
         try:
             doc.save()
-        except SchemaTypeError, e:
+        except SchemaTypeError as e:
             self.assertEqual(str(e), "title must be an instance of str not unicode")
             failed = True
         self.assertEqual(failed, True)
@@ -1010,7 +1010,7 @@ class ApiTestCase(unittest.TestCase):
         class DocA(Document):
            __database__ = 'test'
            __collection__ = "doca"
-           structure = {'title':basestring}
+           structure = {'title':str}
 
         doc = self.connection.DocA()
         doc['title'] = u'foo'
@@ -1032,7 +1032,7 @@ class ApiTestCase(unittest.TestCase):
         failed = False
         try:
             doc.save()
-        except SchemaTypeError, e:
+        except SchemaTypeError as e:
             self.assertEqual(str(e), "foo must be an instance of int not float")
             failed = True
         self.assertEqual(failed, True)
@@ -1049,7 +1049,7 @@ class ApiTestCase(unittest.TestCase):
         failed = False
         try:
             doc.save()
-        except SchemaTypeError, e:
+        except SchemaTypeError as e:
             self.assertEqual(str(e), "foo must be an instance of float not int")
             failed = True
         self.assertEqual(failed, True)
@@ -1086,7 +1086,7 @@ class ApiTestCase(unittest.TestCase):
     def test_unwrapped_cursor(self):
         self.assertEqual(self.col.count(), 0)
 
-        doc_id = self.col.save({}, safe=True)
+        doc_id = self.col.insert_one({}, safe=True)
         self.assertEqual(self.col.count(), 1)
 
         try:

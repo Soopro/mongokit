@@ -68,7 +68,7 @@ class AuthTestCase(unittest.TestCase):
         user.login = u"user"
         user.email = u"user@foo.bar"
         user.password = u"u$ser_p4$$w0rd"
-        print "°°°°°°°°°", user
+        print("°°°°°°°°°", user)
         user.save()
 
         saved_user = self.col.SimpleUser.get_from_id('user')
@@ -92,10 +92,10 @@ class AuthTestCase(unittest.TestCase):
         class SimpleUser(User):
             structure = {
                 "auth":{
-                    "session_id":unicode,
+                    "session_id":str,
                 },
                 "profil":{
-                    "name":unicode,
+                    "name":str,
                 }
             }
         self.connection.register([SimpleUser])
@@ -111,3 +111,5 @@ class AuthTestCase(unittest.TestCase):
         assert saved_user.verify_password("u$ser_p4$$w0rd") == True
 
 
+if __name__ == "__main__":
+    unittest.main()

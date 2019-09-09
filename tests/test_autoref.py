@@ -102,7 +102,7 @@ class AutoRefTestCase(unittest.TestCase):
         class Doc(Document):
             structure = {
                 'embed':Embed,
-                'eggs': unicode,
+                'eggs': str,
             }
             use_autorefs = True
         self.connection.register([Embed, Doc])
@@ -191,7 +191,7 @@ class AutoRefTestCase(unittest.TestCase):
         """
         class EmbedDoc(Document):
             structure = {
-                "spam": unicode
+                "spam": str
             }
         self.connection.register([EmbedDoc])
         embed = self.col.EmbedDoc()
@@ -201,7 +201,7 @@ class AutoRefTestCase(unittest.TestCase):
 
         class EmbedOtherDoc(Document):
             structure = {
-                "ham": unicode
+                "ham": str
             }
         self.connection.register([EmbedOtherDoc])
         embedOther = self.connection.test.embed_other.EmbedOtherDoc()
@@ -213,7 +213,7 @@ class AutoRefTestCase(unittest.TestCase):
             use_autorefs = True
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam": EmbedDoc,
@@ -234,7 +234,7 @@ class AutoRefTestCase(unittest.TestCase):
 
         class EmbedDoc(Document):
             structure = {
-                "spam": unicode
+                "spam": str
             }
         self.connection.register([EmbedDoc])
         embed = self.connection.test['autoref.embed'].EmbedDoc()
@@ -245,7 +245,7 @@ class AutoRefTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam": EmbedDoc,
@@ -261,7 +261,7 @@ class AutoRefTestCase(unittest.TestCase):
         
         class EmbedDoc(Document):
             structure = {
-                "spam": unicode
+                "spam": str
             }
         self.connection.register([EmbedDoc])
         embed = self.connection.test['autoref.embed'].EmbedDoc()
@@ -270,7 +270,7 @@ class AutoRefTestCase(unittest.TestCase):
 
         class EmbedOtherDoc(EmbedDoc):
             structure = {
-                "ham": unicode
+                "ham": str
             }
         self.connection.register([EmbedOtherDoc])
         embedOther = self.connection.test['autoref.embed_other'].EmbedOtherDoc()
@@ -282,7 +282,7 @@ class AutoRefTestCase(unittest.TestCase):
             use_autorefs = True
             structure = {
                 "bla":{
-                    "foo":unicode,
+                    "foo":str,
                     "bar":int,
                 },
                 "spam": EmbedDoc,
@@ -447,13 +447,13 @@ class AutoRefTestCase(unittest.TestCase):
 
     def test_autorefs_embed_in_list_with_bad_reference(self):
         class User(Document):
-            structure = {'name':unicode}
+            structure = {'name':str}
         self.connection.register([User])
 
         class Group(Document):
             use_autorefs = True
             structure = {
-                   'name':unicode,
+                   'name':str,
                    'members':[User], #users
                }
         self.connection.register([User, Group])
@@ -474,7 +474,7 @@ class AutoRefTestCase(unittest.TestCase):
 
     def test_autorefs_with_dynamic_collection(self):
         class DocA(Document):
-            structure = {'a':unicode}
+            structure = {'a':str}
 
         class DocB(Document):
             structure = {'b':DocA}
@@ -508,7 +508,7 @@ class AutoRefTestCase(unittest.TestCase):
         
     def test_autorefs_with_dynamic_db(self):
         class DocA(Document):
-            structure = {'a':unicode}
+            structure = {'a':str}
 
         class DocB(Document):
             structure = {'b':DocA}
@@ -643,8 +643,8 @@ class AutoRefTestCase(unittest.TestCase):
         class User(RootDocument):
            collection_name = "users"
            structure = {
-               "email": unicode,
-               "password": unicode,
+               "email": str,
+               "password": str,
            }
            required_fields = [ "email", "password" ]
            indexes = [
@@ -665,7 +665,7 @@ class AutoRefTestCase(unittest.TestCase):
            use_autorefs = True
            structure   = {
                "user": User,
-               "token": unicode,
+               "token": str,
            }
         # raise an assertion because User is a CallableUser, not User
         self.connection.register([ExampleSession])
@@ -676,7 +676,7 @@ class AutoRefTestCase(unittest.TestCase):
         class EmbedDoc(Document):
             use_dot_notation = True
             structure = {
-               "foo": unicode,
+               "foo": str,
             }
 
         class Doc(Document):
@@ -709,7 +709,7 @@ class AutoRefTestCase(unittest.TestCase):
             use_autorefs = True
             use_dot_notation = True
             structure = {
-                "name": unicode,
+                "name": str,
             }
 
         class UserDocument(Document):
@@ -717,7 +717,7 @@ class AutoRefTestCase(unittest.TestCase):
             use_autorefs = True
             use_dot_notation = True
             structure = {
-                "email": unicode,
+                "email": str,
                 "company": CompanyDocument,
             }
 
@@ -726,7 +726,7 @@ class AutoRefTestCase(unittest.TestCase):
             use_autorefs = True
             use_dot_notation = True
             structure = {
-                "token": unicode,
+                "token": str,
                 "owner": UserDocument,
             }
         self.connection.register([CompanyDocument, UserDocument, SessionDocument])
@@ -752,14 +752,14 @@ class AutoRefTestCase(unittest.TestCase):
             collection_name = "test_companies"
             use_autorefs = True
             structure = {
-                "name": unicode,
+                "name": str,
             }
 
         class UserDocument(Document):
             collection_name = "test_users"
             use_autorefs = True
             structure = {
-                "email": unicode,
+                "email": str,
                 "company": CompanyDocument,
             }
 
@@ -767,7 +767,7 @@ class AutoRefTestCase(unittest.TestCase):
             collection_name = "test_sessions"
             use_autorefs = True
             structure = {
-                "token": unicode,
+                "token": str,
                 "owner": UserDocument,
             }
         self.connection.register([CompanyDocument, UserDocument, SessionDocument])
@@ -779,20 +779,20 @@ class AutoRefTestCase(unittest.TestCase):
     def test_nested_autorefs(self):
         class DocA(Document):
             structure = {
-                'name':unicode,
+                'name':str,
               }
             use_autorefs = True
 
         class DocB(Document):
             structure = {
-                'name': unicode,
+                'name': str,
                 'doca' : DocA,
             }
             use_autorefs = True
 
         class DocC(Document):
             structure = {
-                'name': unicode,
+                'name': str,
                 'docb': DocB,
                 'doca': DocA,
             }
@@ -800,7 +800,7 @@ class AutoRefTestCase(unittest.TestCase):
 
         class DocD(Document):
             structure = {
-                'name': unicode,
+                'name': str,
                 'docc': DocC,
             }
             use_autorefs = True
@@ -835,16 +835,16 @@ class AutoRefTestCase(unittest.TestCase):
     def test_nested_autoref_in_list_and_dict(self):
         class DocA(Document):
             structure = {
-                'name':unicode,
+                'name':str,
               }
             use_autorefs = True
 
 
         class DocB(Document):
             structure = {
-                'name': unicode,
+                'name': str,
                 'test': [{
-                    'something' : unicode,
+                    'something' : str,
                     'doca' : DocA,
                 }]
             }
@@ -873,7 +873,7 @@ class AutoRefTestCase(unittest.TestCase):
 
         class DocA(Document):
             structure = {
-                'name':unicode,
+                'name':str,
               }
             use_autorefs = True
 
@@ -911,7 +911,7 @@ class AutoRefTestCase(unittest.TestCase):
                 return super(VDocument, self).save(*args, **kwargs)
 
         class H(VDocument):
-            structure = {'name':[ObjectId], 'blah':[unicode], 'foo': [{'x':unicode}]}
+            structure = {'name':[ObjectId], 'blah':[str], 'foo': [{'x':str}]}
         self.connection.register([H, VDocument])
 
         h = self.col.H()
@@ -924,7 +924,7 @@ class AutoRefTestCase(unittest.TestCase):
 
     def test_autorefs_with_list2(self):
         class DocA(Document):
-            structure = {'name':unicode}
+            structure = {'name':str}
 
         class DocB(Document):
             structure = {
@@ -959,14 +959,14 @@ class AutoRefTestCase(unittest.TestCase):
         @self.connection.register
         class User(Document):
            structure = {
-             'email': unicode,
+             'email': str,
            }
 
         @self.connection.register
         class Event(Document):
            structure = {
              'user': User,
-             'title': unicode,
+             'title': str,
            }
            required_fields = ['user', 'title']
            use_autorefs = True

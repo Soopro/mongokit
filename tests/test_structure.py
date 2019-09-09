@@ -62,7 +62,7 @@ class StructureTestCase(unittest.TestCase):
     def test_load_with_dict(self):
         doc = {"foo":1, "bla":{"bar":u"spam"}}
         class MyDoc(SchemaDocument):
-            structure = {"foo":int, "bla":{"bar":unicode}}
+            structure = {"foo":int, "bla":{"bar":str}}
         mydoc = MyDoc(doc)
         assert mydoc == doc
         mydoc.validate()
@@ -70,7 +70,7 @@ class StructureTestCase(unittest.TestCase):
     def test_simple_structure(self):
         class MyDoc(SchemaDocument):
             structure = {
-                "foo":unicode,
+                "foo":str,
                 "bar":int
             }
         assert MyDoc() == {"foo":None, "bar":None}
@@ -79,7 +79,7 @@ class StructureTestCase(unittest.TestCase):
         doc = {"foo":u"arf"}
         class MyDoc(SchemaDocument):
             structure = {
-                "foo":unicode,
+                "foo":str,
                 "bar":{"bla":int}
             }
         mydoc = MyDoc(doc)
@@ -88,7 +88,7 @@ class StructureTestCase(unittest.TestCase):
     def test_unknown_field(self):
         class MyDoc(SchemaDocument):
             structure = {
-                "foo":unicode,
+                "foo":str,
             }
         mydoc = MyDoc()
         mydoc["bar"] = 4
@@ -132,7 +132,7 @@ class StructureTestCase(unittest.TestCase):
                 }
             }
         mydoc = MyDoc()
-        assert mydoc._namespaces == ['1', '1.2', '1.2.3', '1.2.3.4', '1.2.3.4.5', '1.2.3.4.5.6', '1.2.3.4.5.6.8', '1.2.3.4.5.6.8.$unicode', '1.2.3.4.5.6.8.$unicode.$int', '1.2.3.4.5.6.7']
+        assert mydoc._namespaces == ['1', '1.2', '1.2.3', '1.2.3.4', '1.2.3.4.5', '1.2.3.4.5.6', '1.2.3.4.5.6.8', '1.2.3.4.5.6.8.$str', '1.2.3.4.5.6.8.$unicode.$int', '1.2.3.4.5.6.7']
         mydoc['1']['2']['3']['4']['5']['6']['7'] = 8
         mydoc['1']['2']['3']['4']['5']['6']['8'] = {u"bla":{3:u"bla"}}
         self.assertRaises(SchemaTypeError,  mydoc.validate)
@@ -152,7 +152,7 @@ class StructureTestCase(unittest.TestCase):
                                     "6":{
                                         "7":int,
                                         "8":{
-                                            unicode:{unicode:int}
+                                            str:{str:int}
                                         }
                                     }
                                 }
@@ -177,7 +177,7 @@ class StructureTestCase(unittest.TestCase):
             use_dot_notation = True
             structure = {
                 "foo":int,
-                "bar":unicode
+                "bar":str
             }
 
         mydoc = MyDoc()
@@ -195,9 +195,9 @@ class StructureTestCase(unittest.TestCase):
         class MyDoc(SchemaDocument):
             use_dot_notation = True
             structure = {
-                "existent": unicode,
+                "existent": str,
                 "exists": {
-                    'subexists': unicode
+                    'subexists': str
                 }
             }
         mydoc = MyDoc()
@@ -218,7 +218,7 @@ class StructureTestCase(unittest.TestCase):
             use_dot_notation = True
             structure = {
                 "foo":{
-                    "bar":unicode
+                    "bar":str
                 }
             }
 
@@ -239,7 +239,7 @@ class StructureTestCase(unittest.TestCase):
             use_dot_notation = True
             structure = {
                 "foo":{
-                    "bar":unicode
+                    "bar":str
                 }
             }
         self.connection.register([MyDoc])
@@ -265,7 +265,7 @@ class StructureTestCase(unittest.TestCase):
             use_dot_notation = True
             structure = {
                 "foo":{
-                    "bar":unicode,
+                    "bar":str,
                 },
                 "spam":int,
             }
@@ -278,8 +278,8 @@ class StructureTestCase(unittest.TestCase):
         assert mydoc.eggs == 4
         try:
             mydoc.not_found
-        except AttributeError, e:
-            print str(e)
+        except AttributeError as e:
+            print(str(e))
         mydoc.foo.eggs = 4
         assert mydoc == {'foo':{'bar':None}, 'spam':None}, mydoc
         mydoc.validate()
@@ -289,7 +289,7 @@ class StructureTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {
                 'foo':int,
-                'bar':unicode,
+                'bar':str,
             }
         self.connection.register([MyDoc])
         
@@ -300,7 +300,7 @@ class StructureTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {
                 'foo':int,
-                'arf': unicode,
+                'arf': str,
             }
         self.connection.register([MyDoc])
         
@@ -319,10 +319,10 @@ class StructureTestCase(unittest.TestCase):
         try:
             class MyDoc(SchemaDocument):
                 structure = {
-                    'topic': unicode,
+                    'topic': str,
                     'when': datetime.datetime.utcnow,
                 }
-        except TypeError, e:
+        except TypeError as e:
             assert str(e).startswith("MyDoc: <built-in method utcnow of type object at "), str(e)
             assert str(e).endswith("is not a type")
             failed = True

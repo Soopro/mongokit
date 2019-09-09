@@ -84,7 +84,7 @@ class DocumentProperties(SchemaProperties):
                             "'fields' key must be specify in indexes")
                     for key, value in index.iteritems():
                         if key == "fields":
-                            if isinstance(value, basestring):
+                            if isinstance(value, str):
                                 if value not in attrs['_namespaces'] and value not in STRUCTURE_KEYWORDS:
                                     raise ValueError(
                                         "Error in indexes: can't find %s in structure" % value)
@@ -93,11 +93,11 @@ class DocumentProperties(SchemaProperties):
                                     raise BadIndexError(
                                         "Error in indexes: a tuple must contain "
                                         "only two value : the field name and the direction")
-                                if not (isinstance(value[1], int) or isinstance(value[1], basestring)):
+                                if not (isinstance(value[1], int) or isinstance(value[1], str)):
                                     raise BadIndexError(
                                         "Error in %s, the direction must be int or basestring "
                                         "(got %s instead)" % (value[0], type(value[1])))
-                                if not isinstance(value[0], basestring):
+                                if not isinstance(value[0], str):
                                     raise BadIndexError(
                                         "Error in %s, the field name must be string "
                                         "(got %s instead)" % (value[0], type(value[0])))
@@ -166,7 +166,7 @@ class Document(SchemaDocument):
         super(Document, self).__init__(doc=doc, gen_skel=gen_skel, _gen_auth_types=False,
                                        lang=lang, fallback_lang=fallback_lang)
         if self.type_field in self:
-            self[self.type_field] = unicode(self.__class__.__name__)
+            self[self.type_field] = str(self.__class__.__name__)
         # collection
         self.collection = collection
         if collection:
@@ -236,11 +236,11 @@ class Document(SchemaDocument):
             error = None
             try:
                 super(Document, self).validate()
-            except StructureError, e:
+            except StructureError as e:
                 error = e
-            except KeyError, e:
+            except KeyError as e:
                 error = e
-            except SchemaTypeError, e:
+            except SchemaTypeError as e:
                 error = e
             if error:
                 if not self.migration_handler:
@@ -423,7 +423,7 @@ class Document(SchemaDocument):
                 self._make_reference(self, self.structure)
         if '_id' not in self:
             if uuid:
-                self['_id'] = unicode("%s-%s" % (self.__class__.__name__, uuid4()))
+                self['_id'] = str("%s-%s" % (self.__class__.__name__, uuid4()))
         self._process_custom_type('bson', self, self.structure)
         self.collection.save(self, safe=safe, *args, **kwargs)
         self._process_custom_type('python', self, self.structure)
@@ -453,12 +453,12 @@ class Document(SchemaDocument):
 
             if isinstance(given_fields, tuple):
                 fields = [given_fields]
-            elif isinstance(given_fields, basestring):
+            elif isinstance(given_fields, str):
                 fields = [(given_fields, 1)]
             else:
                 fields = []
                 for field in given_fields:
-                    if isinstance(field, basestring):
+                    if isinstance(field, str):
                         field = (field, 1)
                     fields.append(field)
             log.debug('Creating index for {}'.format(str(given_fields)))
@@ -536,7 +536,7 @@ class Document(SchemaDocument):
             raise ImportError("can't import anyjson. Please install it before continuing.")
         obj = self.to_json_type()
         _convert_to_python(obj, self.structure)
-        return unicode(dumps(obj))
+        return str(dumps(obj))
 
     def from_json(self, json):
         """

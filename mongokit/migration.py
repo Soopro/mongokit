@@ -85,7 +85,7 @@ class DocumentMigration(object):
                 collection.update(self.target, self.update, multi=True, safe=safe)
                 status = collection.database.last_status()
                 if not status.get('updatedExisting', 1):
-                    print "%s : %s >>> deprecated" % (self.__class__.__name__, method_name)
+                    print("%s : %s >>> deprecated" % (self.__class__.__name__, method_name))
 
     def get_deprecated(self, collection):
         method_names = sorted([i for i in dir(self) if i.startswith('migration') or i.startswith('allmigration')])

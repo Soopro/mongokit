@@ -44,7 +44,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
 
         assert B() == {"a":{"foo":None}, "b":{"bar":None}}, B()
@@ -72,7 +72,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
 
         b = B()
@@ -89,14 +89,14 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
 
         assert B() == {"a":{"foo":3}, "b":{"bar":None}}
  
         class C(A):
             structure = {
-                "c":{"spam":unicode}
+                "c":{"spam":str}
             }
             default_values = {"a.foo":5}
 
@@ -112,14 +112,14 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
 
         assert isinstance(B()['a']['foo'], datetime)
  
         class C(A):
             structure = {
-                "c":{"spam":unicode}
+                "c":{"spam":str}
             }
             default_values = {"a.foo":datetime(2008,8,8)}
 
@@ -135,7 +135,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
 
         b = B()
@@ -159,19 +159,19 @@ class InheritanceTestCase(unittest.TestCase):
     def test_complexe_validation_inheritance(self):
         class A(SchemaDocument):
             structure = {
-                "foo":unicode,
+                "foo":str,
             }
             def validate(self):
-                self["foo"] = unicode(self["foo"])
+                self["foo"] = str(self["foo"])
                 super(A, self).validate()
 
         class B(A):
             structure = {
-                "bar":{"bla":unicode}
+                "bar":{"bla":str}
             }
             default_values = {"bar.bla":3}
             def validate(self):
-                self["bar"]["bla"] = unicode(self["bar"]["bla"])
+                self["bar"]["bla"] = str(self["bar"]["bla"])
                 super(B, self).validate()
 
         b = B()
@@ -190,7 +190,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
             required_fields = ['b.bar']
             default_values = {"a.foo":5}
@@ -201,7 +201,7 @@ class InheritanceTestCase(unittest.TestCase):
  
         class C(B):
             structure = {
-                "c":{"spam":unicode}
+                "c":{"spam":str}
             }
 
         c =  C()
@@ -219,7 +219,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(SchemaDocument):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
             required_fields = ['b.bar']
 
@@ -229,7 +229,7 @@ class InheritanceTestCase(unittest.TestCase):
  
         class C(A,B):
             structure = {
-                "c":{"spam":unicode}
+                "c":{"spam":str}
             }
             default_values = {"a.foo":5}
 
@@ -248,7 +248,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
             structure.update(A.structure)
 
@@ -264,7 +264,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
             structure.update(A.structure)
             required_fields = A.required_fields
@@ -284,7 +284,7 @@ class InheritanceTestCase(unittest.TestCase):
 
         class B(A):
             structure = {
-                "b":{"bar":unicode}
+                "b":{"bar":str}
             }
             structure.update(A.structure)
             default_values = A.default_values
@@ -293,7 +293,7 @@ class InheritanceTestCase(unittest.TestCase):
  
         class C(A):
             structure = {
-                "c":{"spam":unicode}
+                "c":{"spam":str}
             }
             structure.update(A.structure)
             default_values = A.default_values

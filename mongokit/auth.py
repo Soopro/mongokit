@@ -32,11 +32,11 @@ import os
 
 class User(Document):
     structure = {
-        "_id": unicode,
+        "_id": str,
         "user": {
-            "login": unicode,
-            "password": unicode,  # TODO validator
-            "email": unicode,
+            "login": str,
+            "password": str,  # TODO validator
+            "email": str,
         }
     }
     required_fields = ['user.password', 'user.email']  # what if openid ? password is None
@@ -56,11 +56,11 @@ class User(Document):
 
     def set_password(self, password):
         """ Hash password on the fly """
-        if isinstance(password, unicode):
+        if isinstance(password, str):
             password = password.encode('utf-8')
         password_salt = hashlib.sha1(os.urandom(60)).hexdigest()
         crypt = hashlib.sha1(password + password_salt).hexdigest()
-        self['user']['password'] = unicode(password_salt + crypt, 'utf-8')
+        self['user']['password'] = str(password_salt + crypt, 'utf-8')
 
     def get_password(self):
         """ Return the password hashed """
@@ -73,7 +73,7 @@ class User(Document):
 
     def verify_password(self, password):
         """ Check the password against existing credentials  """
-        if isinstance(password, unicode):
+        if isinstance(password, str):
             password = password.encode('utf-8')
         password_salt = self['user']['password'][:40]
         crypt_pass = hashlib.sha1(password + password_salt).hexdigest()

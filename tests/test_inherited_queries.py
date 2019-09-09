@@ -43,10 +43,10 @@ class InheritedQueriesTestCase(unittest.TestCase):
             __database__ = 'test'
             __collection__ = 'mongolite'
             structure = {
-                '_type': unicode,
+                '_type': str,
                 'a':{
                     'foo': int,
-                    'bar': unicode,
+                    'bar': str,
                 }
             }
 
@@ -79,10 +79,10 @@ class InheritedQueriesTestCase(unittest.TestCase):
         @self.connection.register
         class A(Document):
             structure = {
-                '_type': unicode,
+                '_type': str,
                 'a':{
                     'foo': int,
-                    'bar': unicode,
+                    'bar': str,
                 }
             }
 
@@ -116,10 +116,10 @@ class InheritedQueriesTestCase(unittest.TestCase):
         class A(Document):
             type_field = None
             structure = {
-                '_type': unicode,
+                '_type': str,
                 'a':{
                     'foo': int,
-                    'bar': unicode,
+                    'bar': str,
                 }
             }
 
@@ -155,7 +155,7 @@ class InheritedQueriesTestCase(unittest.TestCase):
             structure = {
                 'a':{
                     'foo': int,
-                    'bar': unicode,
+                    'bar': str,
                 }
             }
 
@@ -190,11 +190,11 @@ class InheritedQueriesTestCase(unittest.TestCase):
         class A(Document):
             type_field = '_t'
             structure = {
-                '_type': unicode,
-                '_t': unicode,
+                '_type': str,
+                '_t': str,
                 'a':{
                     'foo': int,
-                    'bar': unicode,
+                    'bar': str,
                 }
             }
 
