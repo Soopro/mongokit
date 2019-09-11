@@ -59,8 +59,8 @@ class User(Document):
         if isinstance(password, str):
             password = password.encode('utf-8')
         password_salt = hashlib.sha1(os.urandom(60)).hexdigest()
-        crypt = hashlib.sha1(password + password_salt).hexdigest()
-        self['user']['password'] = str(password_salt + crypt, 'utf-8')
+        crypt = hashlib.sha1(password + password_salt.encode()).hexdigest()
+        self['user']['password'] = password_salt + crypt
 
     def get_password(self):
         """ Return the password hashed """

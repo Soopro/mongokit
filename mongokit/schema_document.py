@@ -240,7 +240,7 @@ class SchemaProperties(type):
                     raise ValueError("Error in i18n: can't find {} in structure".format(_i18n))
 
 
-class SchemaDocument(dict):
+class SchemaDocument(dict, metaclass=SchemaProperties):
     """
     A SchemaDocument is dictionary with a building structured schema
     The validate method will check that the document match the underling
@@ -311,7 +311,6 @@ class SchemaDocument(dict):
     >>> doc
     {"foo":{"bar":u"bla}}
     """
-    __metaclass__ = SchemaProperties
 
     structure = None
     required_fields = []

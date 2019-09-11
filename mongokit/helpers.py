@@ -218,7 +218,7 @@ class DotCollapsedDict(dict):
         self.update(final_dict)
 
     def _make_dotation(self, d, final_dict, key=""):
-        for k, v in d.iteritems():
+        for k, v in d.items():
             if isinstance(k, type):
                 k = "$%s" % k.__name__
             if isinstance(v, dict) and v != {}:

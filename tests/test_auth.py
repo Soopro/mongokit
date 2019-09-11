@@ -37,8 +37,9 @@ logging.basicConfig()
 class AuthTestCase(unittest.TestCase):
     def setUp(self):
         self.connection = Connection()
-        self.col = self.connection['test']['mongokit']
-        
+        self.db = self.connection['test']
+        self.col = self.db['mongokit']
+
     def tearDown(self):
         self.connection['test'].drop_collection('mongokit')
         self.connection['test'].drop_collection('versionned_mongokit')
@@ -47,7 +48,7 @@ class AuthTestCase(unittest.TestCase):
         class SimpleUser(User): pass
         self.connection.register([SimpleUser])
 
-        user = self.col.SimpleUser()
+        user = self.db.SimpleUser()
         user.login = u"user"
         self.assertRaises(RequireFieldError, user.validate)
         user.password = "myp4$$ord"
@@ -64,7 +65,7 @@ class AuthTestCase(unittest.TestCase):
         class SimpleUser(User): pass
         self.connection.register([SimpleUser])
 
-        user = self.col.SimpleUser()
+        user = self.db.SimpleUser()
         user.login = u"user"
         user.email = u"user@foo.bar"
         user.password = u"u$ser_p4$$w0rd"
@@ -100,7 +101,7 @@ class AuthTestCase(unittest.TestCase):
             }
         self.connection.register([SimpleUser])
 
-        user = self.col.SimpleUser()
+        user = self.db.SimpleUser()
         user.login = u"user"
         user.email = u"user@foo.bar"
         user.password = "u$ser_p4$$w0rd"

@@ -38,7 +38,8 @@ class Collection(PymongoCollection):
         self._documents = {}
         self._collections = {}
         super(Collection, self).__init__(*args, **kwargs)
-        self._registered_documents = self.database.connection._registered_documents
+        # error: Infinite loop
+        self._registered_documents = self.database.client._registered_documents
 
     def __getattr__(self, key):
         if key in self._registered_documents:
@@ -95,11 +96,11 @@ class Collection(PymongoCollection):
 
     def find_and_modify(self, *args, **kwargs):
         obj_class = kwargs.pop('wrap', None)
-        doc = super(Collection, self).find_and_modify(*args, **kwargs)
+        doc = super(Collection, self).find_one_and_update(*args, **kwargs)
         if doc and obj_class:
             return self.collection[obj_class.__name__](doc)
         return doc
-    find_and_modify.__doc__ = PymongoCollection.find_and_modify.__doc__ + """
+    find_and_modify.__doc__ = PymongoCollection.find_one_and_update.__doc__ + """
         added by mongokit::
              - `wrap` (optional): a class object used to wrap
              documents in the query result
@@ -124,7 +125,7 @@ class Collection(PymongoCollection):
         return one random document from the collection
         """
         import random
-        max = self.count()
+        max = self.count_documents()
         if max:
             num = random.randint(0, max-1)
             return self.find().skip(num).next()

@@ -35,7 +35,8 @@ from pymongo import ReadPreference
 class ApiTestCase(unittest.TestCase):
     def setUp(self):
         self.connection = Connection()
-        self.col = self.connection['test']['mongokit']
+        self.db = self.connection['test']
+        self.col = self.db['mongokit']
 
     def tearDown(self):
         self.connection.drop_database('test')
@@ -51,7 +52,7 @@ class ApiTestCase(unittest.TestCase):
                 "spam":[],
             }
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc["bla"]["foo"] = u"bar"
         mydoc["bla"]["bar"] = 42
         mydoc.save()
@@ -88,7 +89,7 @@ class ApiTestCase(unittest.TestCase):
                 "foo":int,
             }
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['_id'] = 'foo'
         mydoc["foo"] = 1
         mydoc.save()
@@ -137,7 +138,7 @@ class ApiTestCase(unittest.TestCase):
                 "foo":int,
             }
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc["_id"] = "bar"
         mydoc["foo"] = 3
         mydoc.save()
@@ -204,17 +205,17 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
         assert self.col.MyDoc.find_one() is None
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 0
         mydoc.save()
-        mydoc = self.col.MyDoc.find_one()
+        mydoc = self.db.MyDoc.find_one()
         assert mydoc["foo"] == 0
         assert isinstance(mydoc, MyDoc)
         for i in range(10):
-            mydoc = self.col.MyDoc()
+            mydoc = self.db.MyDoc()
             mydoc["foo"] = i
             mydoc.save()
-        one_doc = self.col.MyDoc.find_one()
+        one_doc = self.db.MyDoc.find_one()
         assert callable(one_doc) is False
         raw_mydoc = self.col.find_one()
         assert one_doc == raw_mydoc
@@ -225,7 +226,7 @@ class ApiTestCase(unittest.TestCase):
                 "baz":int
             }
         self.connection.register([MyDoc])
-        assert self.col.MyDoc.find_and_modify(query={"baz": 1}, update={"$set": {"baz": 2}}) is None
+        assert self.db.MyDoc.find_and_modify(query={"baz": 1}, update={"$set": {"baz": 2}}) is None
 
     def test_find_and_modify_query_succeeds(self):
         class MyDoc(Document):
@@ -233,11 +234,11 @@ class ApiTestCase(unittest.TestCase):
                 "baz":int
             }
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc["baz"] = 1
         mydoc.save()
 
-        mydoc = self.col.MyDoc.find_and_modify(query={"baz": 1}, update={"$set": {"baz": 2}}, new=True)
+        mydoc = self.db.MyDoc.find_and_modify(query={"baz": 1}, update={"$set": {"baz": 2}}, new=True)
         assert isinstance(mydoc, MyDoc)
         self.assertEquals(2, mydoc["baz"])
 
@@ -247,20 +248,20 @@ class ApiTestCase(unittest.TestCase):
                 "foo":int
             }
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 0
         mydoc.save()
         raw_mydoc = self.col.one()
-        mydoc = self.col.MyDoc.one()
+        mydoc = self.db.MyDoc.one()
         assert callable(mydoc) is False
         assert mydoc == raw_mydoc
         assert mydoc["foo"] == 0
         assert isinstance(mydoc, MyDoc)
         for i in range(10):
-            mydoc = self.col.MyDoc()
+            mydoc = self.db.MyDoc()
             mydoc["foo"] = i
             mydoc.save()
-        self.assertRaises(MultipleResultsFound, self.col.MyDoc.one)
+        self.assertRaises(MultipleResultsFound, self.db.MyDoc.one)
         self.assertRaises(MultipleResultsFound, self.col.one)
 
     def test_find_random(self):
@@ -270,13 +271,13 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
         assert self.col.find_random() is None
-        assert self.col.MyDoc.find_random() is None
+        assert self.db.MyDoc.find_random() is None
         for i in range(50):
-            mydoc = self.col.MyDoc()
+            mydoc = self.db.MyDoc()
             mydoc["foo"] = i
             mydoc.save()
         raw_mydoc = self.col.find_random()
-        mydoc = self.col.MyDoc.find_random()
+        mydoc = self.db.MyDoc.find_random()
         assert callable(mydoc) is False
         assert isinstance(mydoc, MyDoc)
         assert mydoc != raw_mydoc, (mydoc, raw_mydoc)
@@ -294,29 +295,29 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([DocB])
         # creating DocA
         for i in range(10):
-            mydoc = self.col.DocA()
+            mydoc = self.db.DocA()
             mydoc['doc_a']["foo"] = i
             mydoc.save()
         # creating DocB
         for i in range(5):
-            mydoc = self.col.DocB()
+            mydoc = self.db.DocB()
             mydoc['doc_b']["bar"] = i
             mydoc.save()
 
         # all get all documents present in the collection (ie: 15 here)
-        assert self.col.DocA.find().count() == 15
+        assert self.db.DocA.find().count() == 15
 
         # fetch get only the corresponding documents:
-        assert self.col.DocA.fetch().count() == 10, self.col.DocA.fetch().count()
-        assert self.col.DocB.fetch().count() == 5
+        assert self.db.DocA.fetch().count() == 10, self.db.DocA.fetch().count()
+        assert self.db.DocB.fetch().count() == 5
         index = 0
-        for doc in self.col.DocA.fetch():
+        for doc in self.db.DocA.fetch():
             assert doc == {'_id':doc['_id'], 'doc_a':{'foo':index}}, doc
             assert callable(doc) is False
             index += 1
 
         #assert DocA.fetch().limit(12).count() == 10, DocA.fetch().limit(1).count() # ???
-        assert self.col.DocA.fetch().where('this.doc_a.foo > 3').count() == 6
+        assert self.db.DocA.fetch().where('this.doc_a.foo > 3').count() == 6
 
     def test_fetch_with_query(self):
         class DocA(Document):
@@ -333,7 +334,7 @@ class ApiTestCase(unittest.TestCase):
 
         # creating DocA
         for i in range(10):
-            mydoc = self.col.DocA()
+            mydoc = self.db.DocA()
             if i % 2 == 0:
                 mydoc['bar'] = u"spam"
             else:
@@ -342,7 +343,7 @@ class ApiTestCase(unittest.TestCase):
             mydoc.save()
         # creating DocB
         for i in range(5):
-            mydoc = self.col.DocB()
+            mydoc = self.db.DocB()
             if i % 2 == 0:
                 mydoc['bar'] = u"spam"
             else:
@@ -351,12 +352,12 @@ class ApiTestCase(unittest.TestCase):
             mydoc.save()
 
         # all get all documents present in the collection (ie: 15 here)
-        assert self.col.DocA.find().count() == 15
-        assert self.col.DocA.fetch().count() == 10, self.col.DocA.fetch().count()
-        assert self.col.DocB.fetch().count() == 5
+        assert self.db.DocA.find().count() == 15
+        assert self.db.DocA.fetch().count() == 10, self.db.DocA.fetch().count()
+        assert self.db.DocB.fetch().count() == 5
 
-        assert self.col.DocA.fetch({'bar':'spam'}).count() == 5
-        assert self.col.DocB.fetch({'bar':'spam'}).count() == 3
+        assert self.db.DocA.fetch({'bar':'spam'}).count() == 5
+        assert self.db.DocB.fetch({'bar':'spam'}).count() == 3
 
     def test_fetch_inheritance(self):
         class Doc(Document):
@@ -374,34 +375,34 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([Doc, DocA, DocB])
         # creating DocA
         for i in range(10):
-            mydoc = self.col.DocA()
+            mydoc = self.db.DocA()
             mydoc['doc']["bla"] = i+1
             mydoc['doc_a']["foo"] = i
             mydoc.save()
         # creating DocB
         for i in range(5):
-            mydoc = self.col.DocB()
+            mydoc = self.db.DocB()
             mydoc['doc']["bla"] = i+1
             mydoc['doc_a']["foo"] = i
             mydoc['doc_b']["bar"] = i+2
             mydoc.save()
 
         # all get all documents present in the collection (ie: 15 here)
-        assert self.col.DocA.find().count() == 15
+        assert self.db.DocA.find().count() == 15
 
         # fetch get only the corresponding documents:
         # DocB is a subclass of DocA and have all fields of DocA so
         # we get all doc here
-        assert self.col.DocA.fetch().count() == 15, self.col.DocA.fetch().count()
+        assert self.db.DocA.fetch().count() == 15, self.db.DocA.fetch().count()
         # but only the DocB as DocA does not have a 'doc_a' field
-        assert self.col.DocB.fetch().count() == 5
+        assert self.db.DocB.fetch().count() == 5
         index = 0
-        for doc in self.col.DocB.fetch():
+        for doc in self.db.DocB.fetch():
             assert doc == {'_id':doc['_id'], 'doc_a':{'foo':index}, 'doc':{'bla':index+1}, "doc_b":{'bar':index+2}}, (doc, index)
             index += 1
 
         #assert DocA.fetch().limit(12).count() == 10, DocA.fetch().limit(1).count() # ???
-        assert self.col.DocA.fetch().where('this.doc_a.foo > 3').count() == 7
+        assert self.db.DocA.fetch().where('this.doc_a.foo > 3').count() == 7
 
     def test_fetch_one(self):
         class DocA(Document):
@@ -415,19 +416,19 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([DocA, DocB])
 
         # creating DocA
-        mydoc = self.col.DocA()
+        mydoc = self.db.DocA()
         mydoc['doc_a']["foo"] = 1
         mydoc.save()
         # creating DocB
-        mydoc = self.col.DocB()
+        mydoc = self.db.DocB()
         mydoc['doc_b']["bar"] = 2
         mydoc.save()
 
-        docb = self.col.DocB.fetch_one()
+        docb = self.db.DocB.fetch_one()
         assert callable(docb) is False
         assert docb
         assert isinstance(docb, DocB)
-        self.assertRaises(MultipleResultsFound, self.col.DocA.fetch_one)
+        self.assertRaises(MultipleResultsFound, self.db.DocA.fetch_one)
 
     def test_query_with_passing_collection(self):
         class MyDoc(Document):
@@ -477,7 +478,7 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([DocA])
 
         # creating DocA
-        mydoc = self.col.DocA()
+        mydoc = self.db.DocA()
         mydoc['doc_a']["foo"] = u'bar'
         assertion = False
         try:
@@ -490,7 +491,7 @@ class ApiTestCase(unittest.TestCase):
         DocA.skip_validation = True
 
         # creating DocA
-        mydoc = self.col.DocA()
+        mydoc = self.db.DocA()
         mydoc['doc_a']["foo"] = u'foo'
         self.assertRaises(SchemaTypeError, mydoc.save, validate=True)
         mydoc.save()
@@ -519,9 +520,9 @@ class ApiTestCase(unittest.TestCase):
             assertion = True
         assert assertion
 
-        assert self.col.DocA.connection == Connection("localhost", 27017)
-        assert self.col.DocA.collection == Connection("localhost", 27017)['test']['mongokit']
-        assert self.col.DocA.db == Connection("localhost", 27017)['test']
+        assert self.db.DocA.connection == Connection("localhost", 27017)
+        assert self.db.DocA.collection == Connection("localhost", 27017)['test']['mongokit']
+        assert self.db.DocA.db == Connection("localhost", 27017)['test']
 
     def test_all_with_dynamic_collection(self):
         class Section(Document):
@@ -578,7 +579,7 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
 
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['doc']['foo'] = 3
         mydoc['doc']['bla'] = u'bla bla'
         assert mydoc.get_size() == 41, mydoc.get_size()
@@ -597,18 +598,18 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([MyDoc])
 
         for i in range(2000):
-            mydoc = self.col.MyDoc()
+            mydoc = self.db.MyDoc()
             mydoc['foo'] = i
             mydoc.save()
 
         import time
         start = time.time()
-        wrapped_mydocs = [i for i in self.col.MyDoc.find()]
+        wrapped_mydocs = [i for i in self.db.MyDoc.find()]
         end = time.time()
         wrap_time = end-start
 
         start = time.time()
-        mydocs = [i for i in self.col.find().sort('foo', -1)]
+        mydocs = [i for i in self.db.find().sort('foo', -1)]
         end = time.time()
         no_wrap_time = end-start
 
@@ -626,7 +627,7 @@ class ApiTestCase(unittest.TestCase):
             structure = {"foo":int}
         self.connection.register([MyDoc])
 
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['_id'] = u'1'
         mydoc['foo'] = 1
         mydoc.save()
@@ -641,7 +642,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc['foo'] = 3
         mydoc.save()
 
-        mydoc = self.col.MyDoc.find_one({'foo':1})
+        mydoc = self.db.MyDoc.find_one({'foo':1})
         assert mydoc.get_dbref(), DBRef(u'mongokit', u'1', u'test')
 
         mydoc = self.connection.test.othercol.MyDoc.find_one({'foo':2})
@@ -655,7 +656,7 @@ class ApiTestCase(unittest.TestCase):
             structure = {"foo":int}
         self.connection.register([MyDoc])
 
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 1
         self.assertRaises(TypeError, hash, mydoc)
 
@@ -666,7 +667,7 @@ class ApiTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {"foo":int}
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         self.assertRaises(TypeError, mydoc)
         assert callable(mydoc) is False
 
@@ -691,12 +692,12 @@ class ApiTestCase(unittest.TestCase):
             }
 
         self.connection.register([MyDoc])
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc.foo = 3
         mydoc.bar.egg = u'bla'
         mydoc.toto.spam.bla = 7
         mydoc.save()
-        fetched_doc = self.col.MyDoc.find_one()
+        fetched_doc = self.db.MyDoc.find_one()
         assert fetched_doc.foo == 3, fetched_doc.foo
         assert fetched_doc.bar.egg == "bla", fetched_doc.bar.egg
         self.assertEqual(fetched_doc.toto.spam.bla, 7)
@@ -709,7 +710,7 @@ class ApiTestCase(unittest.TestCase):
            }
         self.connection.register([Doc])
 
-        doc = self.col.Doc()
+        doc = self.db.Doc()
         doc['foo'] = u"bla"
         doc.save()
         doc['bar'] = 2
@@ -728,7 +729,7 @@ class ApiTestCase(unittest.TestCase):
                 foo = u"blo"
             else:
                 foo = u"bla"
-            doc = self.col.Doc(doc={'foo':foo, 'bla':i})
+            doc = self.db.Doc(doc={'foo':foo, 'bla':i})
             doc.save()
         assert self.col.find().distinct('foo') == ['blo', 'bla']
         assert self.col.find().distinct('bla') == range(15)
@@ -741,11 +742,11 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
         for i in range(10):
-            mydoc = self.col.MyDoc()
+            mydoc = self.db.MyDoc()
             mydoc["foo"] = i
             mydoc["bar"]['bla'] = i
             mydoc.save()
-        explain1 = self.col.MyDoc.find({"foo":{"$gt":4}}).explain()
+        explain1 = self.db.MyDoc.find({"foo":{"$gt":4}}).explain()
         explain2 = self.col.find({'foo':{'gt':4}}).explain()
         explain1.pop('n')
         explain2.pop('n')
@@ -762,10 +763,10 @@ class ApiTestCase(unittest.TestCase):
                 "bar":str,
             }
         self.connection.register([Doc])
-        doc = self.col.Doc()
+        doc = self.db.Doc()
         doc['foo'] = 12
         doc.save()
-        fetch_doc = self.col.Doc.find_one()
+        fetch_doc = self.db.Doc.find_one()
         fetch_doc['bar'] = u'egg'
         fetch_doc.save()
 
@@ -777,7 +778,7 @@ class ApiTestCase(unittest.TestCase):
             required_fields = ['extra']
             skip_validation = True
         self.connection.register([Task])
-        task = self.col.Task()
+        task = self.db.Task()
         task['extra'] = u'foo'
         task.validate()
 
@@ -801,7 +802,7 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
 
-        doc = self.col.MyDoc()
+        doc = self.db.MyDoc()
         self.assertRaises(KeyError, doc.reload)
         doc['_id'] = 3
         doc['foo']['bar'] = u'mybar'
@@ -825,11 +826,11 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([MyDoc])
 
         for i in range(10):
-            doc = self.col.MyDoc()
+            doc = self.db.MyDoc()
             doc['foo'] = i
             doc.save()
 
-        cur = self.col.MyDoc.find()
+        cur = self.db.MyDoc.find()
         for i in cur:
             assert isinstance(i, MyDoc), type(MyDoc)
         try:
@@ -850,11 +851,11 @@ class ApiTestCase(unittest.TestCase):
                 'foo':int,
             }
 
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
 
-        raw_doc = self.col.MyDoc.find_one()
+        raw_doc = self.db.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         assert isinstance(raw_doc, MyDoc)
 
@@ -874,17 +875,17 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(mydoc.collection.name, 'mydoc')
 
         raw_doc = self.connection.test.MyDoc.find_one()
-        self.assertEqual(self.col.MyDoc.find_one(), None)
+        self.assertEqual(self.db.MyDoc.find_one(), None)
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
 
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mongokit')
 
-        raw_doc = self.col.MyDoc.find_one()
+        raw_doc = self.db.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
@@ -921,7 +922,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mydoc')
         self.assertEqual(mydoc.collection.database.name, 'test')
-        self.assertEqual(self.col.MyDoc.find_one(), None)
+        self.assertEqual(self.db.MyDoc.find_one(), None)
 
         raw_doc = self.connection.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
@@ -934,7 +935,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mydoc')
         self.assertEqual(mydoc.collection.database.name, 'othertest')
-        self.assertEqual(self.col.MyDoc.find_one(), None)
+        self.assertEqual(self.db.MyDoc.find_one(), None)
 
         raw_doc = self.connection.othertest.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
@@ -942,13 +943,13 @@ class ApiTestCase(unittest.TestCase):
         assert isinstance(raw_doc, MyDoc)
 
         # and still can use it via a collection
-        mydoc = self.col.MyDoc()
+        mydoc = self.db.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mongokit')
         self.assertEqual(mydoc.collection.database.name, 'test')
 
-        raw_doc = self.col.MyDoc.find_one()
+        raw_doc = self.db.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
@@ -1075,16 +1076,16 @@ class ApiTestCase(unittest.TestCase):
             structure = {'foo':int}
 
         for i in range(10):
-            doc = self.col.DocA()
+            doc = self.db.DocA()
             doc['foo'] = i
             doc.save()
 
-        self.assertEqual(isinstance(self.col.DocA.find()[0], DocA), True)
-        self.assertEqual(isinstance(self.col.DocA.find()[3], DocA), True)
-        self.assertEqual(isinstance(self.col.DocA.find()[3:], self.col.DocA.find().__class__), True)
+        self.assertEqual(isinstance(self.db.DocA.find()[0], DocA), True)
+        self.assertEqual(isinstance(self.db.DocA.find()[3], DocA), True)
+        self.assertEqual(isinstance(self.db.DocA.find()[3:], self.db.DocA.find().__class__), True)
 
     def test_unwrapped_cursor(self):
-        self.assertEqual(self.col.count(), 0)
+        self.assertEqual(self.col.count_documents(), 0)
 
         doc_id = self.col.insert_one({}, safe=True)
         self.assertEqual(self.col.count(), 1)

@@ -135,9 +135,7 @@ class DocumentProperties(SchemaProperties):
                             assert isinstance(value, int)
 
 
-class Document(SchemaDocument):
-
-    __metaclass__ = DocumentProperties
+class Document(SchemaDocument, metaclass=DocumentProperties):
 
     type_field = '_type'
 

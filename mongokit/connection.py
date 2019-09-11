@@ -100,6 +100,9 @@ class MongoKitConnection(object):
                 self._databases[key] = Database(self, key)
             return self._databases[key]
 
+    def __getitem__(self, key):
+        return Database(self, key)
+
 
 class Connection(MongoKitConnection, PymongoConnection):
     def __init__(self, *args, **kwargs):
