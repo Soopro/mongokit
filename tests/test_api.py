@@ -59,7 +59,7 @@ class ApiTestCase(unittest.TestCase):
         assert isinstance(mydoc['_id'], ObjectId)
 
         saved_doc = self.col.find_one({"bla.bar":42})
-        for key, value in mydoc.iteritems():
+        for key, value in mydoc.items():
             assert saved_doc[key] == value
 
         mydoc = self.col.MyDoc()
@@ -70,7 +70,7 @@ class ApiTestCase(unittest.TestCase):
         assert mydoc['_id'].startswith("MyDoc"), id
 
         saved_doc = self.col.find_one({"bla.bar":43})
-        for key, value in mydoc.iteritems():
+        for key, value in mydoc.items():
             assert saved_doc[key] == value
 
     def test_save_without_collection(self):
@@ -656,7 +656,7 @@ class ApiTestCase(unittest.TestCase):
             structure = {"foo":int}
         self.connection.register([MyDoc])
 
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         mydoc['foo'] = 1
         self.assertRaises(TypeError, hash, mydoc)
 
@@ -667,7 +667,7 @@ class ApiTestCase(unittest.TestCase):
         class MyDoc(Document):
             structure = {"foo":int}
         self.connection.register([MyDoc])
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         self.assertRaises(TypeError, mydoc)
         assert callable(mydoc) is False
 
@@ -692,12 +692,12 @@ class ApiTestCase(unittest.TestCase):
             }
 
         self.connection.register([MyDoc])
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         mydoc.foo = 3
         mydoc.bar.egg = u'bla'
         mydoc.toto.spam.bla = 7
         mydoc.save()
-        fetched_doc = self.db.MyDoc.find_one()
+        fetched_doc = self.col.MyDoc.find_one()
         assert fetched_doc.foo == 3, fetched_doc.foo
         assert fetched_doc.bar.egg == "bla", fetched_doc.bar.egg
         self.assertEqual(fetched_doc.toto.spam.bla, 7)
@@ -710,7 +710,7 @@ class ApiTestCase(unittest.TestCase):
            }
         self.connection.register([Doc])
 
-        doc = self.db.Doc()
+        doc = self.col.Doc()
         doc['foo'] = u"bla"
         doc.save()
         doc['bar'] = 2
@@ -729,7 +729,7 @@ class ApiTestCase(unittest.TestCase):
                 foo = u"blo"
             else:
                 foo = u"bla"
-            doc = self.db.Doc(doc={'foo':foo, 'bla':i})
+            doc = self.col.Doc(doc={'foo':foo, 'bla':i})
             doc.save()
         assert self.col.find().distinct('foo') == ['blo', 'bla']
         assert self.col.find().distinct('bla') == range(15)
@@ -742,11 +742,11 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
         for i in range(10):
-            mydoc = self.db.MyDoc()
+            mydoc = self.col.MyDoc()
             mydoc["foo"] = i
             mydoc["bar"]['bla'] = i
             mydoc.save()
-        explain1 = self.db.MyDoc.find({"foo":{"$gt":4}}).explain()
+        explain1 = self.col.MyDoc.find({"foo":{"$gt":4}}).explain()
         explain2 = self.col.find({'foo':{'gt':4}}).explain()
         explain1.pop('n')
         explain2.pop('n')
@@ -763,10 +763,10 @@ class ApiTestCase(unittest.TestCase):
                 "bar":str,
             }
         self.connection.register([Doc])
-        doc = self.db.Doc()
+        doc = self.col.Doc()
         doc['foo'] = 12
         doc.save()
-        fetch_doc = self.db.Doc.find_one()
+        fetch_doc = self.col.Doc.find_one()
         fetch_doc['bar'] = u'egg'
         fetch_doc.save()
 
@@ -778,7 +778,7 @@ class ApiTestCase(unittest.TestCase):
             required_fields = ['extra']
             skip_validation = True
         self.connection.register([Task])
-        task = self.db.Task()
+        task = self.col.Task()
         task['extra'] = u'foo'
         task.validate()
 
@@ -802,7 +802,7 @@ class ApiTestCase(unittest.TestCase):
             }
         self.connection.register([MyDoc])
 
-        doc = self.db.MyDoc()
+        doc = self.col.MyDoc()
         self.assertRaises(KeyError, doc.reload)
         doc['_id'] = 3
         doc['foo']['bar'] = u'mybar'
@@ -826,11 +826,11 @@ class ApiTestCase(unittest.TestCase):
         self.connection.register([MyDoc])
 
         for i in range(10):
-            doc = self.db.MyDoc()
+            doc = self.col.MyDoc()
             doc['foo'] = i
             doc.save()
 
-        cur = self.db.MyDoc.find()
+        cur = self.col.MyDoc.find()
         for i in cur:
             assert isinstance(i, MyDoc), type(MyDoc)
         try:
@@ -851,11 +851,11 @@ class ApiTestCase(unittest.TestCase):
                 'foo':int,
             }
 
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
 
-        raw_doc = self.db.MyDoc.find_one()
+        raw_doc = self.col.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         assert isinstance(raw_doc, MyDoc)
 
@@ -875,17 +875,17 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(mydoc.collection.name, 'mydoc')
 
         raw_doc = self.connection.test.MyDoc.find_one()
-        self.assertEqual(self.db.MyDoc.find_one(), None)
+        self.assertEqual(self.col.MyDoc.find_one(), None)
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
 
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mongokit')
 
-        raw_doc = self.db.MyDoc.find_one()
+        raw_doc = self.col.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
@@ -922,7 +922,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mydoc')
         self.assertEqual(mydoc.collection.database.name, 'test')
-        self.assertEqual(self.db.MyDoc.find_one(), None)
+        self.assertEqual(self.col.MyDoc.find_one(), None)
 
         raw_doc = self.connection.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
@@ -935,7 +935,7 @@ class ApiTestCase(unittest.TestCase):
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mydoc')
         self.assertEqual(mydoc.collection.database.name, 'othertest')
-        self.assertEqual(self.db.MyDoc.find_one(), None)
+        self.assertEqual(self.col.MyDoc.find_one(), None)
 
         raw_doc = self.connection.othertest.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
@@ -943,13 +943,13 @@ class ApiTestCase(unittest.TestCase):
         assert isinstance(raw_doc, MyDoc)
 
         # and still can use it via a collection
-        mydoc = self.db.MyDoc()
+        mydoc = self.col.MyDoc()
         mydoc['foo'] = 3
         mydoc.save()
         self.assertEqual(mydoc.collection.name, 'mongokit')
         self.assertEqual(mydoc.collection.database.name, 'test')
 
-        raw_doc = self.db.MyDoc.find_one()
+        raw_doc = self.col.MyDoc.find_one()
         self.assertEqual(raw_doc['foo'], 3)
         self.assertEqual(raw_doc, mydoc)
         assert isinstance(raw_doc, MyDoc)
@@ -972,54 +972,54 @@ class ApiTestCase(unittest.TestCase):
         self.assertEqual(self.connection.test.doca.find_one(), doc)
 
 
-    def test_basestring_type(self):
-        @self.connection.register
-        class DocA(Document):
-           __database__ = 'test'
-           __collection__ = "doca"
-           structure = {'title':str}
-
-        doc = self.connection.DocA()
-        doc['title'] = 'foo'
-        failed = False
-        try:
-            doc.save()
-        except SchemaTypeError as e:
-            self.assertEqual(str(e), "title must be an instance of unicode not str")
-            failed = True
-        self.assertEqual(failed, True)
-
-        @self.connection.register
-        class DocA(Document):
-           __database__ = 'test'
-           __collection__ = "doca"
-           authorized_types = Document.authorized_types+[str]
-           structure = {'title':str}
-
-        doc = self.connection.DocA()
-        doc['title'] = u'foo'
-        failed = False
-        try:
-            doc.save()
-        except SchemaTypeError as e:
-            self.assertEqual(str(e), "title must be an instance of str not unicode")
-            failed = True
-        self.assertEqual(failed, True)
-
-
-        @self.connection.register
-        class DocA(Document):
-           __database__ = 'test'
-           __collection__ = "doca"
-           structure = {'title':str}
-
-        doc = self.connection.DocA()
-        doc['title'] = u'foo'
-        doc.save()
-        doc['title'] = 'foo'
-        doc.save()
-
-        self.assertEqual(self.connection.test.doca.find_one(), doc)
+    # def test_basestring_type(self):
+    #     @self.connection.register
+    #     class DocA(Document):
+    #        __database__ = 'test'
+    #        __collection__ = "doca"
+    #        structure = {'title':str}
+    #
+    #     doc = self.connection.DocA()
+    #     doc['title'] = 'foo'
+    #     failed = False
+    #     try:
+    #         doc.save()
+    #     except SchemaTypeError as e:
+    #         self.assertEqual(str(e), "title must be an instance of unicode not str")
+    #         failed = True
+    #     self.assertEqual(failed, True)
+    #
+    #     @self.connection.register
+    #     class DocA(Document):
+    #        __database__ = 'test'
+    #        __collection__ = "doca"
+    #        authorized_types = Document.authorized_types+[str]
+    #        structure = {'title':str}
+    #
+    #     doc = self.connection.DocA()
+    #     doc['title'] = u'foo'
+    #     failed = False
+    #     try:
+    #         doc.save()
+    #     except SchemaTypeError as e:
+    #         self.assertEqual(str(e), "title must be an instance of str not unicode")
+    #         failed = True
+    #     self.assertEqual(failed, True)
+    #
+    #
+    #     @self.connection.register
+    #     class DocA(Document):
+    #        __database__ = 'test'
+    #        __collection__ = "doca"
+    #        structure = {'title':str}
+    #
+    #     doc = self.connection.DocA()
+    #     doc['title'] = u'foo'
+    #     doc.save()
+    #     doc['title'] = 'foo'
+    #     doc.save()
+    #
+    #     self.assertEqual(self.connection.test.doca.find_one(), doc)
 
     def test_float_and_int_types(self):
         @self.connection.register
@@ -1076,13 +1076,13 @@ class ApiTestCase(unittest.TestCase):
             structure = {'foo':int}
 
         for i in range(10):
-            doc = self.db.DocA()
+            doc = self.col.DocA()
             doc['foo'] = i
             doc.save()
 
-        self.assertEqual(isinstance(self.db.DocA.find()[0], DocA), True)
-        self.assertEqual(isinstance(self.db.DocA.find()[3], DocA), True)
-        self.assertEqual(isinstance(self.db.DocA.find()[3:], self.db.DocA.find().__class__), True)
+        self.assertEqual(isinstance(self.col.DocA.find()[0], DocA), True)
+        self.assertEqual(isinstance(self.col.DocA.find()[3], DocA), True)
+        self.assertEqual(isinstance(self.col.DocA.find()[3:], self.col.DocA.find().__class__), True)
 
     def test_unwrapped_cursor(self):
         self.assertEqual(self.col.count_documents(), 0)

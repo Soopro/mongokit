@@ -82,7 +82,7 @@ class DocumentProperties(SchemaProperties):
                     if 'fields' not in index:
                         raise BadIndexError(
                             "'fields' key must be specify in indexes")
-                    for key, value in index.iteritems():
+                    for key, value in index.items():
                         if key == "fields":
                             if isinstance(value, str):
                                 if value not in attrs['_namespaces'] and value not in STRUCTURE_KEYWORDS:
@@ -295,7 +295,7 @@ class Document(SchemaDocument, metaclass=DocumentProperties):
 
         See pymongo's documentation for more details on arguments.
         """
-        return self.collection.find_one(wrap=self._obj_class, *args, **kwargs)
+        return self(self.collection.find_one(wrap=self._obj_class, *args, **kwargs))
 
     def one(self, *args, **kwargs):
         """

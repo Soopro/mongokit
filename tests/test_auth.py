@@ -108,6 +108,7 @@ class AuthTestCase(unittest.TestCase):
         user.save()
 
         saved_user = self.col.SimpleUser.get_from_id('user')
+        saved_user = SimpleUser(saved_user)
         assert saved_user.verify_password("bad") == False
         assert saved_user.verify_password("u$ser_p4$$w0rd") == True
 

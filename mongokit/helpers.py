@@ -100,7 +100,7 @@ class DotedDict(dict):
         self.__dotify_dict(self)
 
     def __dotify_dict(self, doc):
-        for k, v in doc.iteritems():
+        for k, v in doc.items():
             if isinstance(v, dict):
                 doc[k] = DotedDict(v)
                 self.__dotify_dict(v)
