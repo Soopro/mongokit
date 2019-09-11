@@ -76,7 +76,7 @@ class User(Document):
         if isinstance(password, str):
             password = password.encode('utf-8')
         password_salt = self['user']['password'][:40]
-        crypt_pass = hashlib.sha1(password + password_salt).hexdigest()
+        crypt_pass = hashlib.sha1(password + password_salt.encode()).hexdigest()
         if crypt_pass == self['user']['password'][40:]:
             return True
         else:

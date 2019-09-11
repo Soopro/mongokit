@@ -169,7 +169,7 @@ class Document(SchemaDocument, metaclass=DocumentProperties):
         self.collection = collection
         if collection:
             self.db = collection.database
-            self.connection = self.db.connection
+            self.connection = self.db.client
             # indexing all embed doc if any (autorefs feature)
             self._dbrefs = {}
             if self.use_autorefs and collection:
@@ -423,7 +423,7 @@ class Document(SchemaDocument, metaclass=DocumentProperties):
             if uuid:
                 self['_id'] = str("%s-%s" % (self.__class__.__name__, uuid4()))
         self._process_custom_type('bson', self, self.structure)
-        self.collection.save(self, safe=safe, *args, **kwargs)
+        self.collection.insert_one(self, *args, **kwargs)
         self._process_custom_type('python', self, self.structure)
 
     def delete(self):

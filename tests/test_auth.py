@@ -48,7 +48,7 @@ class AuthTestCase(unittest.TestCase):
         class SimpleUser(User): pass
         self.connection.register([SimpleUser])
 
-        user = self.db.SimpleUser()
+        user = self.col.SimpleUser()
         user.login = u"user"
         self.assertRaises(RequireFieldError, user.validate)
         user.password = "myp4$$ord"
@@ -65,7 +65,7 @@ class AuthTestCase(unittest.TestCase):
         class SimpleUser(User): pass
         self.connection.register([SimpleUser])
 
-        user = self.db.SimpleUser()
+        user = self.col.SimpleUser()
         user.login = u"user"
         user.email = u"user@foo.bar"
         user.password = u"u$ser_p4$$w0rd"
@@ -101,7 +101,7 @@ class AuthTestCase(unittest.TestCase):
             }
         self.connection.register([SimpleUser])
 
-        user = self.db.SimpleUser()
+        user = self.col.SimpleUser()
         user.login = u"user"
         user.email = u"user@foo.bar"
         user.password = "u$ser_p4$$w0rd"
