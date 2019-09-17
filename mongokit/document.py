@@ -423,7 +423,10 @@ class Document(SchemaDocument, metaclass=DocumentProperties):
             if uuid:
                 self['_id'] = str("%s-%s" % (self.__class__.__name__, uuid4()))
         self._process_custom_type('bson', self, self.structure)
-        self.collection.insert_one(self, *args, **kwargs)
+        if '_id' in self and self.collection.find_one({"_id": self["_id"]}):
+            self.collection.replace_one(self, {"_id": self["_id"]}, *args, **kwargs)
+        else:
+            self.collection.insert_one(self, *args, **kwargs)
         self._process_custom_type('python', self, self.structure)
 
     def delete(self):

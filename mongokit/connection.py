@@ -68,9 +68,9 @@ class MongoKitConnection(object):
         # cleanup
         for _, db in self._databases.items():
             for __, col in db._collections.items():
-                for docname, ___ in col._documents.items():
+                for docname, ___ in list(col._documents.items()):
                     del col._documents[docname]
-                for obj_name in [obj.__name__ for obj in obj_list]:
+                for obj_name in list([obj.__name__ for obj in obj_list]):
                     if obj_name in col._registered_documents:
                         del col._registered_documents[obj_name]
         # register
