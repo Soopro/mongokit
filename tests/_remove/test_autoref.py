@@ -38,7 +38,7 @@ class AutoRefTestCase(unittest.TestCase):
     def setUp(self):
         self.connection = Connection()
         self.col = self.connection['test']['mongokit']
-        
+
     def tearDown(self):
         self.connection.drop_database('test')
         self.connection.drop_database('test2')
@@ -177,11 +177,11 @@ class AutoRefTestCase(unittest.TestCase):
         docb['b']['doc_a'] = doca
         assert docb == {'b': {'doc_a': {'a': {'foo': 2}, 'abis': {'bar': None}, '_id': 'doca'}}}, docb
         docb['_id'] = 'docb'
-        docb['b']['doc_a']['a']['foo'] = None 
+        docb['b']['doc_a']['a']['foo'] = None
         self.assertRaises(RequireFieldError, docb.validate)
-        docb['b']['doc_a']['a']['foo'] = 4 
+        docb['b']['doc_a']['a']['foo'] = 4
         docb.save()
-    
+
         docb['b']['doc_a'] = None
         docb.save()
 
@@ -224,9 +224,9 @@ class AutoRefTestCase(unittest.TestCase):
         mydoc["bla"]["foo"] = u"bar"
         mydoc["bla"]["bar"] = 42
         mydoc["spam"] = embedOther
-        
-        self.assertRaises(SchemaTypeError, mydoc.save) 
-  
+
+        self.assertRaises(SchemaTypeError, mydoc.save)
+
     def test_badautoref_not_enabled(self):
         # Test that, if autoref is disabled
         # adding a Document to the structure act
@@ -256,9 +256,9 @@ class AutoRefTestCase(unittest.TestCase):
 
     def test_subclass(self):
         # Test autoref enabled, but embed a subclass.
-        # e.g. if we say EmbedDoc, a subclass of EmbedDoc 
+        # e.g. if we say EmbedDoc, a subclass of EmbedDoc
         # is also valid.
-        
+
         class EmbedDoc(Document):
             structure = {
                 "spam": str
@@ -292,7 +292,7 @@ class AutoRefTestCase(unittest.TestCase):
         mydoc["bla"]["foo"] = u"bar"
         mydoc["bla"]["bar"] = 42
         mydoc["spam"] = embedOther
-        
+
         mydoc.save()
         assert mydoc['spam'].collection.name == "autoref.embed_other"
         assert mydoc['spam'] == embedOther
@@ -344,7 +344,7 @@ class AutoRefTestCase(unittest.TestCase):
         docb['b']['doc_a'].append(doca2)
         assert docb == {'b': {'doc_a': [{'a': {'foo': 4}, '_id': 'doca'}, {'a': {'foo': 5}, '_id': 'doca2'}]}, '_id': 'docb'}
         docb.validate()
-    
+
     def test_autoref_retrieval(self):
         class DocA(Document):
             structure = {
@@ -361,11 +361,11 @@ class AutoRefTestCase(unittest.TestCase):
             structure = {
                 "b":{
                     "doc_a":DocA,
-                    "deep": {"doc_a_deep":DocA}, 
+                    "deep": {"doc_a_deep":DocA},
                     "deeper": {"doc_a_deeper":DocA,
                                "inner":{"doc_a_deepest":DocA}}
                 },
-                
+
             }
             use_autorefs = True
         self.connection.register([DocB])
@@ -374,17 +374,20 @@ class AutoRefTestCase(unittest.TestCase):
         # the structure is automatically filled by the corresponding structure
         docb['_id'] = 'docb'
         docb['b']['doc_a'] = doca
-    
+        print('docb:', docb)
         # create a few deeper  docas
         deep = self.col.DocA()
-        #deep['_id'] = 'deep' 
+        #deep['_id'] = 'deep'
         deep['a']['foo'] = 5
         deep.save()
+        print('========------>>>>>>')
+        print('deep:', deep)
         docb['b']['deep']['doc_a_deep'] = deep
         deeper = self.col.DocA()
         deeper['_id'] = 'deeper'
         deeper['a']['foo'] = 8
         deeper.save()
+        print('deeper:', deeper)
         docb['b']['deeper']['doc_a_deeper'] = deeper
         deepest = self.col.DocA()
         deepest['_id'] = 'deepest'
@@ -393,9 +396,11 @@ class AutoRefTestCase(unittest.TestCase):
         deepest.save()
         docb['b']['deeper']['inner']['doc_a_deepest'] = deepest
 
+        print(docb)
         docb.save()
 
         # now, does retrieval function as expected?
+        print(docb)
         test_doc = self.col.DocB.get_from_id(docb['_id'])
         assert isinstance(test_doc['b']['doc_a'], DocA), type(test_doc['b']['doc_a'])
         assert test_doc['b']['doc_a']['a']['foo'] == 3
@@ -422,9 +427,9 @@ class AutoRefTestCase(unittest.TestCase):
             structure = {
                 "b":{
                     "doc_a":DocA,
-                    "deep": {"doc_a_deep":DocA}, 
+                    "deep": {"doc_a_deep":DocA},
                 },
-                
+
             }
             use_autorefs = True
         self.connection.register([DocB])
@@ -500,12 +505,12 @@ class AutoRefTestCase(unittest.TestCase):
         docb2['b'] = doca2
         docb2.save()
 
-        assert docb2['b']['a'] == 'foo' 
+        assert docb2['b']['a'] == 'foo'
         assert docb2['b'].collection.name == 'doca2'
         assert docb2.collection.name == 'docb'
 
         assert list(self.connection.test.docb.DocB.fetch()) == [docb, docb2]
-        
+
     def test_autorefs_with_dynamic_db(self):
         class DocA(Document):
             structure = {'a':str}
@@ -659,7 +664,7 @@ class AutoRefTestCase(unittest.TestCase):
         u['password'] = u'....'
         u.save()
         assert u['_id'] != None
-    
+
         class ExampleSession(RootDocument):
            #collection_name = "sessions"
            use_autorefs = True
